@@ -16,6 +16,14 @@ class DMTrackerApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
+        fontFamily: 'SF Pro',
+        fontFamilyFallback: const [
+          '.AppleSystemUIFont',
+          'SF Pro Text',
+          'SF Pro Display',
+          'Helvetica Neue',
+          'sans-serif',
+        ],
         scaffoldBackgroundColor: const Color(
           0xFFFDF7E3,
         ), // Classic iOS Notes Yellow
@@ -257,17 +265,30 @@ class _TrackerHomeState extends State<TrackerHome>
             },
           ),
           actions: [
-            TextButton(
+            Thick3DButton(
+              depth: 3.0,
+              borderRadius: 10.0,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              color: const Color(0xFFFFFDF5),
+              shadowColor: const Color(0xFFC7B988),
+              borderColor: const Color(0xFFD4C894),
               onPressed: () => Navigator.of(context).pop(),
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.black54,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontFamily: 'SF Pro',
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
                 ),
               ),
-              child: const Text('Cancel'),
             ),
-            ElevatedButton(
+            Thick3DButton(
+              depth: 3.5,
+              borderRadius: 10.0,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              color: const Color(0xFF2E2E34),
+              shadowColor: const Color(0xFF141416),
+              borderColor: const Color(0xFF4B4B55),
               onPressed: () {
                 if (controller.text.trim().isNotEmpty) {
                   final newOpener = OpenerItem(
@@ -277,15 +298,14 @@ class _TrackerHomeState extends State<TrackerHome>
                   Navigator.of(context).pop(newOpener);
                 }
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2E2E34),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+              child: const Text(
+                'Create & Link',
+                style: TextStyle(
+                  fontFamily: 'SF Pro',
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
                 ),
               ),
-              child: const Text('Create & Link'),
             ),
           ],
         ),
@@ -431,8 +451,9 @@ class _TrackerHomeState extends State<TrackerHome>
         title: const Text(
           'Cold DM Tracker',
           style: TextStyle(
+            fontFamily: 'SF Pro',
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
             color: Colors.black87,
           ),
         ),
@@ -440,7 +461,18 @@ class _TrackerHomeState extends State<TrackerHome>
           controller: _tabController,
           labelColor: Colors.black87,
           unselectedLabelColor: Colors.black54,
-          indicatorColor: const Color(0xFF8C8C8C),
+          indicatorColor: const Color(0xFF4B4B55),
+          indicatorWeight: 2.5,
+          labelStyle: const TextStyle(
+            fontFamily: 'SF Pro',
+            fontWeight: FontWeight.w700,
+            fontSize: 13,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontFamily: 'SF Pro',
+            fontWeight: FontWeight.w500,
+            fontSize: 13,
+          ),
           tabs: [
             Tab(text: 'Openers (${openers.length})'),
             Tab(text: 'Profiles (${profiles.length})'),
@@ -451,18 +483,31 @@ class _TrackerHomeState extends State<TrackerHome>
         controller: _tabController,
         children: [_buildOpenersTab(), _buildProfilesTab()],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        elevation: 2,
-        backgroundColor: const Color(0xFF2E2E34),
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      floatingActionButton: Thick3DButton(
+        depth: 4.5,
+        borderRadius: 20.0,
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        color: const Color(0xFF2E2E34),
+        shadowColor: const Color(0xFF141416),
+        borderColor: const Color(0xFF4B4B55),
         onPressed: _tabController.index == 0
             ? _addEmptyOpener
             : _addEmptyProfile,
-        icon: const Icon(Icons.add_rounded, size: 20),
-        label: Text(
-          _tabController.index == 0 ? 'New Opener' : 'New Profile',
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.add_rounded, size: 20, color: Colors.white),
+            const SizedBox(width: 6),
+            Text(
+              _tabController.index == 0 ? 'New Opener' : 'New Profile',
+              style: const TextStyle(
+                fontFamily: 'SF Pro',
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -474,7 +519,7 @@ class _TrackerHomeState extends State<TrackerHome>
       return const Center(
         child: Text(
           'No openers yet. Click New Opener to add your first template.',
-          style: TextStyle(color: Colors.black54),
+          style: TextStyle(fontFamily: 'SF Pro', color: Colors.black54),
         ),
       );
     }
@@ -511,6 +556,7 @@ class _TrackerHomeState extends State<TrackerHome>
                         Text(
                           'Opener #${openers.length - index}',
                           style: const TextStyle(
+                            fontFamily: 'SF Pro',
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                             color: Colors.black87,
@@ -551,6 +597,7 @@ class _TrackerHomeState extends State<TrackerHome>
                               Text(
                                 '${opener.successRate.toStringAsFixed(1)}% success',
                                 style: TextStyle(
+                                  fontFamily: 'SF Pro',
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: opener.successRate >= 30
@@ -645,7 +692,7 @@ class _TrackerHomeState extends State<TrackerHome>
     IconData? icon,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.65),
         borderRadius: BorderRadius.circular(12),
@@ -661,31 +708,53 @@ class _TrackerHomeState extends State<TrackerHome>
             child: Text(
               label,
               style: const TextStyle(
+                fontFamily: 'SF Pro',
                 fontSize: 12,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: Colors.black87,
               ),
             ),
           ),
-          _buildMiniButton(
-            icon: Icons.remove_rounded,
+          Thick3DButton(
+            depth: 3.0,
+            borderRadius: 8.0,
+            padding: const EdgeInsets.all(5),
+            color: const Color(0xFFFFFDF5),
+            shadowColor: const Color(0xFFC7B988),
+            borderColor: const Color(0xFFD4C894),
             onPressed: onDecrement,
+            child: const Icon(
+              Icons.remove_rounded,
+              size: 14,
+              color: Colors.black87,
+            ),
           ),
           Container(
-            constraints: const BoxConstraints(minWidth: 32),
+            constraints: const BoxConstraints(minWidth: 36),
             alignment: Alignment.center,
             child: Text(
               '$value',
               style: const TextStyle(
-                fontSize: 14,
+                fontFamily: 'SF Pro',
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: Colors.black87,
               ),
             ),
           ),
-          _buildMiniButton(
-            icon: Icons.add_rounded,
+          Thick3DButton(
+            depth: 3.0,
+            borderRadius: 8.0,
+            padding: const EdgeInsets.all(5),
+            color: const Color(0xFFFFFDF5),
+            shadowColor: const Color(0xFFC7B988),
+            borderColor: const Color(0xFFD4C894),
             onPressed: onIncrement,
+            child: const Icon(
+              Icons.add_rounded,
+              size: 14,
+              color: Colors.black87,
+            ),
           ),
         ],
       ),
@@ -698,7 +767,7 @@ class _TrackerHomeState extends State<TrackerHome>
       return const Center(
         child: Text(
           'No profiles tracked yet. Click New Profile to add a contact.',
-          style: TextStyle(color: Colors.black54),
+          style: TextStyle(fontFamily: 'SF Pro', color: Colors.black54),
         ),
       );
     }
@@ -742,6 +811,7 @@ class _TrackerHomeState extends State<TrackerHome>
                       child: TextFormField(
                         initialValue: profile.username,
                         style: const TextStyle(
+                          fontFamily: 'SF Pro',
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                         ),
@@ -750,6 +820,7 @@ class _TrackerHomeState extends State<TrackerHome>
                           hintText: 'e.g. johndoe',
                           prefixText: '@',
                           prefixStyle: TextStyle(
+                            fontFamily: 'SF Pro',
                             fontWeight: FontWeight.w700,
                             color: Colors.black54,
                           ),
@@ -762,13 +833,14 @@ class _TrackerHomeState extends State<TrackerHome>
                     ),
                     const SizedBox(width: 12),
 
-                    // Quick Action Buttons
+                    // Quick Action 3D Buttons
                     if (cleanHandle.isNotEmpty) ...[
                       _buildPillActionButton(
                         label: 'Profile',
                         icon: Icons.open_in_new_rounded,
-                        bgColor: const Color(0xFFEEF2FF),
-                        borderColor: const Color(0xFFC7D2FE),
+                        color: const Color(0xFFEEF2FF),
+                        shadowColor: const Color(0xFFA5B4FC),
+                        borderColor: const Color(0xFF818CF8),
                         textColor: const Color(0xFF4338CA),
                         onTap: () => _openUrl(
                           'https://www.instagram.com/$cleanHandle/',
@@ -778,8 +850,9 @@ class _TrackerHomeState extends State<TrackerHome>
                       _buildPillActionButton(
                         label: 'Direct DM',
                         icon: Icons.send_rounded,
-                        bgColor: const Color(0xFFECFDF5),
-                        borderColor: const Color(0xFFA7F3D0),
+                        color: const Color(0xFFECFDF5),
+                        shadowColor: const Color(0xFF6EE7B7),
+                        borderColor: const Color(0xFF34D399),
                         textColor: const Color(0xFF047857),
                         onTap: () =>
                             _openUrl('https://ig.me/m/$cleanHandle'),
@@ -787,12 +860,12 @@ class _TrackerHomeState extends State<TrackerHome>
                       const SizedBox(width: 12),
                     ],
 
-                    // Opened Status Pill Toggle Button
+                    // Opened Status 3D Toggle Button
                     _buildOpenedStatusToggle(profile),
 
                     const SizedBox(width: 8),
 
-                    // Delete Profile Button
+                    // Delete Profile 3D Button
                     _buildDeleteButton(
                       tooltip: 'Delete Profile',
                       onPressed: () => _deleteProfile(profile),
@@ -811,6 +884,11 @@ class _TrackerHomeState extends State<TrackerHome>
                         key: ValueKey('${profile.id}_$validOpenerId'),
                         initialValue: validOpenerId,
                         isExpanded: true,
+                        style: const TextStyle(
+                          fontFamily: 'SF Pro',
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
                         decoration: const InputDecoration(
                           labelText: 'Opener Used',
                           prefixIcon: Icon(
@@ -826,7 +904,10 @@ class _TrackerHomeState extends State<TrackerHome>
                             value: null,
                             child: Text(
                               'None',
-                              style: TextStyle(color: Colors.black54),
+                              style: TextStyle(
+                                fontFamily: 'SF Pro',
+                                color: Colors.black54,
+                              ),
                             ),
                           ),
                           ...openers.map(
@@ -835,6 +916,10 @@ class _TrackerHomeState extends State<TrackerHome>
                               child: Text(
                                 o.text.isEmpty ? '(Untitled Opener)' : o.text,
                                 overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontFamily: 'SF Pro',
+                                  color: Colors.black87,
+                                ),
                               ),
                             ),
                           ),
@@ -843,6 +928,7 @@ class _TrackerHomeState extends State<TrackerHome>
                             child: Text(
                               '+ Create New Opener...',
                               style: TextStyle(
+                                fontFamily: 'SF Pro',
                                 color: Color(0xFF6366F1),
                                 fontWeight: FontWeight.w600,
                               ),
@@ -872,6 +958,7 @@ class _TrackerHomeState extends State<TrackerHome>
                           child: Text(
                             profile.lastDmDate,
                             style: const TextStyle(
+                              fontFamily: 'SF Pro',
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
@@ -888,6 +975,11 @@ class _TrackerHomeState extends State<TrackerHome>
                   initialValue: profile.notes,
                   maxLines: 2,
                   minLines: 2,
+                  style: const TextStyle(
+                    fontFamily: 'SF Pro',
+                    fontSize: 13,
+                    color: Colors.black87,
+                  ),
                   decoration: const InputDecoration(
                     labelText: 'Feed / Person Notes',
                     hintText:
@@ -907,48 +999,25 @@ class _TrackerHomeState extends State<TrackerHome>
     );
   }
 
-  // --- BUTTON & CONTROL HELPERS ---
-  Widget _buildMiniButton({
-    required IconData icon,
-    required VoidCallback onPressed,
-  }) {
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: 26,
-        height: 26,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF3ECCC),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFFD4C894)),
-        ),
-        child: Icon(icon, size: 14, color: Colors.black87),
-      ),
-    );
-  }
-
+  // --- BUTTON & CONTROL HELPERS (PRETTY 3D) ---
   Widget _buildDeleteButton({
     required String tooltip,
     required VoidCallback onPressed,
   }) {
     return Tooltip(
       message: tooltip,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: const EdgeInsets.all(7),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFEE2E2).withValues(alpha: 0.7),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xFFFECACA)),
-          ),
-          child: const Icon(
-            Icons.delete_outline_rounded,
-            size: 16,
-            color: Color(0xFFDC2626),
-          ),
+      child: Thick3DButton(
+        depth: 3.0,
+        borderRadius: 8.0,
+        padding: const EdgeInsets.all(6),
+        color: const Color(0xFFFFECEC),
+        shadowColor: const Color(0xFFE5A3A3),
+        borderColor: const Color(0xFFFCA5A5),
+        onPressed: onPressed,
+        child: const Icon(
+          Icons.delete_outline_rounded,
+          size: 15,
+          color: Color(0xFFDC2626),
         ),
       ),
     );
@@ -957,86 +1026,149 @@ class _TrackerHomeState extends State<TrackerHome>
   Widget _buildPillActionButton({
     required String label,
     required IconData icon,
-    required Color bgColor,
+    required Color color,
+    required Color shadowColor,
     required Color borderColor,
     required Color textColor,
     required VoidCallback onTap,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: borderColor),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 13, color: textColor),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: textColor,
-              ),
+    return Thick3DButton(
+      depth: 3.0,
+      borderRadius: 16.0,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      color: color,
+      shadowColor: shadowColor,
+      borderColor: borderColor,
+      onPressed: onTap,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: textColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'SF Pro',
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: textColor,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildOpenedStatusToggle(ProfileItem profile) {
-    return InkWell(
-      onTap: () => _toggleProfileOpened(profile, !profile.isOpened),
-      borderRadius: BorderRadius.circular(20),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: profile.isOpened
-              ? const Color(0xFF10B981)
-              : Colors.white.withValues(alpha: 0.7),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: profile.isOpened
-                ? const Color(0xFF059669)
-                : const Color(0xFFD4C894),
+    return Thick3DButton(
+      depth: 3.5,
+      borderRadius: 16.0,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      color: profile.isOpened ? const Color(0xFF10B981) : const Color(0xFFFFFDF5),
+      shadowColor:
+          profile.isOpened ? const Color(0xFF047857) : const Color(0xFFC7B988),
+      borderColor:
+          profile.isOpened ? const Color(0xFF059669) : const Color(0xFFD4C894),
+      onPressed: () => _toggleProfileOpened(profile, !profile.isOpened),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            profile.isOpened
+                ? Icons.check_circle_rounded
+                : Icons.circle_outlined,
+            size: 14,
+            color: profile.isOpened ? Colors.white : Colors.black45,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
+          const SizedBox(width: 6),
+          Text(
+            profile.isOpened ? 'Opened' : 'Unopened',
+            style: TextStyle(
+              fontFamily: 'SF Pro',
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: profile.isOpened ? Colors.white : Colors.black87,
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// --- BEAUTIFUL TACTILE 3D BUTTON COMPONENT ---
+class Thick3DButton extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onPressed;
+  final Color color;
+  final Color shadowColor;
+  final Color? borderColor;
+  final double depth;
+  final double borderRadius;
+  final EdgeInsetsGeometry padding;
+  final bool isCircle;
+
+  const Thick3DButton({
+    super.key,
+    required this.child,
+    required this.onPressed,
+    this.color = const Color(0xFFF3ECCC),
+    this.shadowColor = const Color(0xFFC7B988),
+    this.borderColor,
+    this.depth = 4.0,
+    this.borderRadius = 12.0,
+    this.padding = const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+    this.isCircle = false,
+  });
+
+  @override
+  State<Thick3DButton> createState() => _Thick3DButtonState();
+}
+
+class _Thick3DButtonState extends State<Thick3DButton> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveBorderColor =
+        widget.borderColor ?? widget.shadowColor.withValues(alpha: 0.8);
+
+    return GestureDetector(
+      onTapDown: widget.onPressed == null
+          ? null
+          : (_) => setState(() => _isPressed = true),
+      onTapUp: widget.onPressed == null
+          ? null
+          : (_) {
+              setState(() => _isPressed = false);
+              widget.onPressed?.call();
+            },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 60),
+        curve: Curves.easeOut,
+        margin: EdgeInsets.only(
+          top: _isPressed ? widget.depth : 0.0,
+          bottom: _isPressed ? 0.0 : widget.depth,
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              profile.isOpened
-                  ? Icons.check_circle_rounded
-                  : Icons.circle_outlined,
-              size: 15,
-              color: profile.isOpened ? Colors.white : Colors.black45,
-            ),
-            const SizedBox(width: 6),
-            Text(
-              profile.isOpened ? 'Opened' : 'Unopened',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: profile.isOpened ? Colors.white : Colors.black87,
-              ),
-            ),
-          ],
+        padding: widget.padding,
+        decoration: BoxDecoration(
+          color: widget.color,
+          shape: widget.isCircle ? BoxShape.circle : BoxShape.rectangle,
+          borderRadius:
+              widget.isCircle ? null : BorderRadius.circular(widget.borderRadius),
+          border: Border.all(color: effectiveBorderColor, width: 1.2),
+          boxShadow: _isPressed
+              ? []
+              : [
+                  BoxShadow(
+                    color: widget.shadowColor,
+                    offset: Offset(0, widget.depth),
+                    blurRadius: 0,
+                  ),
+                ],
         ),
+        child: widget.child,
       ),
     );
   }
