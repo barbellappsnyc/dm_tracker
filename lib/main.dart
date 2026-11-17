@@ -15,37 +15,54 @@ class DMTrackerApp extends StatelessWidget {
       title: 'Cold DM Tracker',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF141416),
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF6366F1),
-          secondary: Color(0xFF10B981),
-          surface: Color(0xFF1E1E22),
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: const Color(
+          0xFFFDF7E3,
+        ), // Classic iOS Notes Yellow
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF8C8C8C),
+          secondary: Color(0xFF5C5C5C),
+          surface: Color(0xFFFDF7E3),
         ),
         cardTheme: CardThemeData(
-          color: const Color(0xFF1E1E22),
+          color: const Color(
+            0xFFFFFBEA,
+          ), // Slightly lighter yellow for note cards
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(color: Color(0xFF2E2E34), width: 1),
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(
+              color: Color(0xFFE2D9B3),
+              width: 1,
+            ), // Subtle notepad line
           ),
-          elevation: 0,
+          elevation: 1,
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: const Color(0xFF141416),
+          fillColor: Colors.white.withValues(alpha: 0.65),
           isDense: true,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 10,
+            horizontal: 14,
+            vertical: 12,
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Color(0xFF2E2E34)),
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFD4C894)),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Color(0xFF2E2E34)),
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFD4C894)),
           ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF6366F1), width: 1.5),
+          ),
+          labelStyle: const TextStyle(color: Colors.black54, fontSize: 13),
+          hintStyle: const TextStyle(color: Colors.black38, fontSize: 13),
+        ),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Colors.black87),
+          bodyLarge: TextStyle(color: Colors.black87),
         ),
       ),
       home: const TrackerHome(),
@@ -214,11 +231,20 @@ class _TrackerHomeState extends State<TrackerHome>
       return await showDialog<OpenerItem>(
         context: context,
         builder: (context) => AlertDialog(
-          backgroundColor: const Color(0xFF1E1E22),
-          title: const Text('Create New Opener'),
+          backgroundColor: const Color(0xFFFFFBEA),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFFE2D9B3)),
+          ),
+          title: const Text(
+            'Create New Opener',
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87),
+          ),
           content: TextField(
             controller: controller,
             autofocus: true,
+            maxLines: 3,
+            minLines: 1,
             decoration: const InputDecoration(hintText: 'Enter opener line...'),
             onSubmitted: (val) {
               if (val.trim().isNotEmpty) {
@@ -233,6 +259,12 @@ class _TrackerHomeState extends State<TrackerHome>
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black54,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
               child: const Text('Cancel'),
             ),
             ElevatedButton(
@@ -245,6 +277,14 @@ class _TrackerHomeState extends State<TrackerHome>
                   Navigator.of(context).pop(newOpener);
                 }
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2E2E34),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
               child: const Text('Create & Link'),
             ),
           ],
@@ -384,15 +424,23 @@ class _TrackerHomeState extends State<TrackerHome>
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E22),
-        elevation: 0,
+        backgroundColor: const Color(
+          0xFFF6EAA0,
+        ), // Darker yellow leather/header vibe
+        elevation: 1,
         title: const Text(
           'Cold DM Tracker',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
         ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: const Color(0xFF6366F1),
+          labelColor: Colors.black87,
+          unselectedLabelColor: Colors.black54,
+          indicatorColor: const Color(0xFF8C8C8C),
           tabs: [
             Tab(text: 'Openers (${openers.length})'),
             Tab(text: 'Profiles (${profiles.length})'),
@@ -403,14 +451,19 @@ class _TrackerHomeState extends State<TrackerHome>
         controller: _tabController,
         children: [_buildOpenersTab(), _buildProfilesTab()],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF6366F1),
+      floatingActionButton: FloatingActionButton.extended(
+        elevation: 2,
+        backgroundColor: const Color(0xFF2E2E34),
         foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         onPressed: _tabController.index == 0
             ? _addEmptyOpener
             : _addEmptyProfile,
-        tooltip: _tabController.index == 0 ? 'Add Opener' : 'Add Profile',
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add_rounded, size: 20),
+        label: Text(
+          _tabController.index == 0 ? 'New Opener' : 'New Profile',
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+        ),
       ),
     );
   }
@@ -420,8 +473,8 @@ class _TrackerHomeState extends State<TrackerHome>
     if (openers.isEmpty) {
       return const Center(
         child: Text(
-          'No openers yet. Click + in the corner to add your first opener.',
-          style: TextStyle(color: Colors.white54),
+          'No openers yet. Click New Opener to add your first template.',
+          style: TextStyle(color: Colors.black54),
         ),
       );
     }
@@ -433,96 +486,148 @@ class _TrackerHomeState extends State<TrackerHome>
         final opener = openers[index];
         return Card(
           key: ValueKey(opener.id),
-          margin: const EdgeInsets.only(bottom: 10),
+          margin: const EdgeInsets.only(bottom: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFFE2D9B3), width: 1),
+          ),
           child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Row(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Line Content
-                Expanded(
-                  flex: 5,
-                  child: TextFormField(
-                    initialValue: opener.text,
-                    decoration: const InputDecoration(
-                      labelText: 'Opener Line',
-                      hintText: 'Type your cold DM opener...',
-                    ),
-                    onChanged: (val) {
-                      opener.text = val;
-                      _saveData();
-                    },
-                  ),
-                ),
-                const SizedBox(width: 20),
-
-                // 2. Times Used Counter
-                _buildCounterBox(
-                  label: 'Times Used',
-                  value: opener.timesUsed,
-                  onDecrement: () {
-                    if (opener.timesUsed > 0) {
-                      setState(() => opener.timesUsed--);
-                      _saveData();
-                    }
-                  },
-                  onIncrement: () {
-                    setState(() => opener.timesUsed++);
-                    _saveData();
-                  },
-                ),
-                const SizedBox(width: 20),
-
-                // 3. Times Opened Counter
-                _buildCounterBox(
-                  label: 'Times Opened',
-                  value: opener.timesOpened,
-                  onDecrement: () {
-                    if (opener.timesOpened > 0) {
-                      setState(() => opener.timesOpened--);
-                      _saveData();
-                    }
-                  },
-                  onIncrement: () {
-                    setState(() => opener.timesOpened++);
-                    _saveData();
-                  },
-                ),
-                const SizedBox(width: 24),
-
-                // 4. Success Rate %
-                SizedBox(
-                  width: 90,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Success Rate',
-                        style: TextStyle(fontSize: 11, color: Colors.white54),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        '${opener.successRate.toStringAsFixed(1)}%',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: opener.successRate >= 30
-                              ? const Color(0xFF10B981)
-                              : Colors.white,
+                // 1. Header: Opener title + Success Rate pill + Delete Button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.format_quote_rounded,
+                          size: 16,
+                          color: Colors.black45,
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Opener #${openers.length - index}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        // Success Rate Pill
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: opener.successRate >= 30
+                                ? const Color(0xFFD1FAE5)
+                                : Colors.black.withValues(alpha: 0.04),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: opener.successRate >= 30
+                                  ? const Color(0xFF10B981)
+                                  : const Color(0xFFD4C894),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.trending_up_rounded,
+                                size: 14,
+                                color: opener.successRate >= 30
+                                    ? const Color(0xFF059669)
+                                    : Colors.black54,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${opener.successRate.toStringAsFixed(1)}% success',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: opener.successRate >= 30
+                                      ? const Color(0xFF047857)
+                                      : Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildDeleteButton(
+                          tooltip: 'Delete Opener',
+                          onPressed: () => _deleteOpener(opener),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 12),
 
-                // Delete Button
-                IconButton(
-                  icon: const Icon(
-                    Icons.delete_outline,
-                    color: Colors.white38,
-                    size: 20,
+                // 2. Opener Line (Vertically stacked, multiline support)
+                TextFormField(
+                  initialValue: opener.text,
+                  maxLines: 3,
+                  minLines: 2,
+                  decoration: const InputDecoration(
+                    labelText: 'Opener Script',
+                    hintText: 'Type your cold DM opener line here...',
+                    alignLabelWithHint: true,
                   ),
-                  tooltip: 'Delete Opener',
-                  onPressed: () => _deleteOpener(opener),
+                  onChanged: (val) {
+                    opener.text = val;
+                    _saveData();
+                  },
+                ),
+                const SizedBox(height: 12),
+
+                // 3. Stats & Counters Row (Vertically stacked underneath)
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildCounterBox(
+                        label: 'Times Used',
+                        value: opener.timesUsed,
+                        icon: Icons.send_rounded,
+                        onDecrement: () {
+                          if (opener.timesUsed > 0) {
+                            setState(() => opener.timesUsed--);
+                            _saveData();
+                          }
+                        },
+                        onIncrement: () {
+                          setState(() => opener.timesUsed++);
+                          _saveData();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildCounterBox(
+                        label: 'Times Opened',
+                        value: opener.timesOpened,
+                        icon: Icons.mark_email_read_rounded,
+                        onDecrement: () {
+                          if (opener.timesOpened > 0) {
+                            setState(() => opener.timesOpened--);
+                            _saveData();
+                          }
+                        },
+                        onIncrement: () {
+                          setState(() => opener.timesOpened++);
+                          _saveData();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -537,47 +642,53 @@ class _TrackerHomeState extends State<TrackerHome>
     required int value,
     required VoidCallback onDecrement,
     required VoidCallback onIncrement,
+    IconData? icon,
   }) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 11, color: Colors.white54),
-        ),
-        const SizedBox(height: 4),
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF141416),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xFF2E2E34)),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.65),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE2D9B3)),
+      ),
+      child: Row(
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 15, color: Colors.black45),
+            const SizedBox(width: 8),
+          ],
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.remove, size: 15),
-                visualDensity: VisualDensity.compact,
-                onPressed: onDecrement,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text(
-                  '$value',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.add, size: 15),
-                visualDensity: VisualDensity.compact,
-                onPressed: onIncrement,
-              ),
-            ],
+          _buildMiniButton(
+            icon: Icons.remove_rounded,
+            onPressed: onDecrement,
           ),
-        ),
-      ],
+          Container(
+            constraints: const BoxConstraints(minWidth: 32),
+            alignment: Alignment.center,
+            child: Text(
+              '$value',
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          _buildMiniButton(
+            icon: Icons.add_rounded,
+            onPressed: onIncrement,
+          ),
+        ],
+      ),
     );
   }
 
@@ -586,8 +697,8 @@ class _TrackerHomeState extends State<TrackerHome>
     if (profiles.isEmpty) {
       return const Center(
         child: Text(
-          'No profiles tracked yet. Click + in the corner to add a recipient.',
-          style: TextStyle(color: Colors.white54),
+          'No profiles tracked yet. Click New Profile to add a contact.',
+          style: TextStyle(color: Colors.black54),
         ),
       );
     }
@@ -604,214 +715,329 @@ class _TrackerHomeState extends State<TrackerHome>
 
         return Card(
           key: ValueKey(profile.id),
-          margin: const EdgeInsets.only(bottom: 10),
+          margin: const EdgeInsets.only(bottom: 14),
           color: profile.isOpened
-              ? const Color(0xFF0F291E) // Turns green when opened is toggled on
-              : const Color(0xFF1E1E22),
+              ? const Color(0xFFECFDF5) // Soft mint green when opened
+              : const Color(0xFFFFFBEA), // Light notepad yellow
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(16),
             side: BorderSide(
               color: profile.isOpened
                   ? const Color(0xFF10B981)
-                  : const Color(0xFF2E2E34),
+                  : const Color(0xFFE2D9B3),
               width: 1.2,
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Username + Clickable Profile/DM Links
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
+                // Field 1: Top Bar (Username + Quick Action Links + Opened Toggle + Delete)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: TextFormField(
                         initialValue: profile.username,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
                         decoration: const InputDecoration(
                           labelText: 'Username',
                           hintText: 'e.g. johndoe',
                           prefixText: '@',
+                          prefixStyle: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black54,
+                          ),
                         ),
                         onChanged: (val) {
                           setState(() => profile.username = val);
                           _saveData();
                         },
                       ),
-                      if (cleanHandle.isNotEmpty) ...[
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () => _openUrl(
-                                'https://www.instagram.com/$cleanHandle/',
-                              ),
-                              child: const Row(
-                                children: [
-                                  Icon(
-                                    Icons.open_in_new,
-                                    size: 12,
-                                    color: Color(0xFF818CF8),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    'Profile',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Color(0xFF818CF8),
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            InkWell(
-                              onTap: () =>
-                                  _openUrl('https://ig.me/m/$cleanHandle'),
-                              child: const Row(
-                                children: [
-                                  Icon(
-                                    Icons.send_outlined,
-                                    size: 12,
-                                    color: Color(0xFF34D399),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    'Direct DM',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Color(0xFF34D399),
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-
-                // 2. Last DM Date (Clickable Date Picker)
-                SizedBox(
-                  width: 130,
-                  child: InkWell(
-                    onTap: () => _pickDate(profile),
-                    borderRadius: BorderRadius.circular(8),
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        labelText: 'Last DM Sent',
-                        suffixIcon: Icon(Icons.calendar_today, size: 14),
-                      ),
-                      child: Text(
-                        profile.lastDmDate,
-                        style: const TextStyle(fontSize: 13),
-                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 12),
+                    const SizedBox(width: 12),
 
-                // 3. Opener Used Dropdown (Linked to Tab 1 + Create New option)
-                Expanded(
-                  flex: 4,
-                  child: DropdownButtonFormField<String>(
-                    key: ValueKey('${profile.id}_$validOpenerId'),
-                    initialValue: validOpenerId,
-                    isExpanded: true,
-                    decoration: const InputDecoration(labelText: 'Opener Used'),
-                    dropdownColor: const Color(0xFF1E1E22),
-                    items: [
-                      const DropdownMenuItem<String>(
-                        value: null,
-                        child: Text(
-                          'None',
-                          style: TextStyle(color: Colors.white54),
+                    // Quick Action Buttons
+                    if (cleanHandle.isNotEmpty) ...[
+                      _buildPillActionButton(
+                        label: 'Profile',
+                        icon: Icons.open_in_new_rounded,
+                        bgColor: const Color(0xFFEEF2FF),
+                        borderColor: const Color(0xFFC7D2FE),
+                        textColor: const Color(0xFF4338CA),
+                        onTap: () => _openUrl(
+                          'https://www.instagram.com/$cleanHandle/',
                         ),
                       ),
-                      ...openers.map(
-                        (o) => DropdownMenuItem<String>(
-                          value: o.id,
-                          child: Text(
-                            o.text.isEmpty ? '(Untitled Opener)' : o.text,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
+                      const SizedBox(width: 8),
+                      _buildPillActionButton(
+                        label: 'Direct DM',
+                        icon: Icons.send_rounded,
+                        bgColor: const Color(0xFFECFDF5),
+                        borderColor: const Color(0xFFA7F3D0),
+                        textColor: const Color(0xFF047857),
+                        onTap: () =>
+                            _openUrl('https://ig.me/m/$cleanHandle'),
                       ),
-                      const DropdownMenuItem<String>(
-                        value: '__CREATE_NEW__',
-                        child: Text(
-                          '+ Create New Opener...',
-                          style: TextStyle(
-                            color: Color(0xFF818CF8),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+                      const SizedBox(width: 12),
                     ],
-                    onChanged: (val) => _linkOpenerToProfile(profile, val),
-                  ),
-                ),
-                const SizedBox(width: 12),
 
-                // 4. Opened Toggle (Turns Row Green + Increments Opener Success)
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Opened',
-                      style: TextStyle(fontSize: 11, color: Colors.white54),
-                    ),
-                    Checkbox(
-                      value: profile.isOpened,
-                      activeColor: const Color(0xFF10B981),
-                      onChanged: (val) => _toggleProfileOpened(profile, val),
+                    // Opened Status Pill Toggle Button
+                    _buildOpenedStatusToggle(profile),
+
+                    const SizedBox(width: 8),
+
+                    // Delete Profile Button
+                    _buildDeleteButton(
+                      tooltip: 'Delete Profile',
+                      onPressed: () => _deleteProfile(profile),
                     ),
                   ],
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(height: 12),
 
-                // 5. Feed / Person Notes Field
-                Expanded(
-                  flex: 5,
-                  child: TextFormField(
-                    initialValue: profile.notes,
-                    maxLines: 2,
-                    minLines: 1,
-                    decoration: const InputDecoration(
-                      labelText: 'Feed / Person Notes',
-                      hintText:
-                          'What is their feed like? Niche, vibe, mutuals...',
+                // Field 2: Details Row (Opener Dropdown + Last DM Date)
+                Row(
+                  children: [
+                    // Opener Dropdown
+                    Expanded(
+                      flex: 3,
+                      child: DropdownButtonFormField<String>(
+                        key: ValueKey('${profile.id}_$validOpenerId'),
+                        initialValue: validOpenerId,
+                        isExpanded: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Opener Used',
+                          prefixIcon: Icon(
+                            Icons.forum_outlined,
+                            size: 16,
+                            color: Colors.black45,
+                          ),
+                        ),
+                        dropdownColor: const Color(0xFFFFFBEA),
+                        borderRadius: BorderRadius.circular(12),
+                        items: [
+                          const DropdownMenuItem<String>(
+                            value: null,
+                            child: Text(
+                              'None',
+                              style: TextStyle(color: Colors.black54),
+                            ),
+                          ),
+                          ...openers.map(
+                            (o) => DropdownMenuItem<String>(
+                              value: o.id,
+                              child: Text(
+                                o.text.isEmpty ? '(Untitled Opener)' : o.text,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          const DropdownMenuItem<String>(
+                            value: '__CREATE_NEW__',
+                            child: Text(
+                              '+ Create New Opener...',
+                              style: TextStyle(
+                                color: Color(0xFF6366F1),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                        onChanged: (val) => _linkOpenerToProfile(profile, val),
+                      ),
                     ),
-                    onChanged: (val) {
-                      profile.notes = val;
-                      _saveData();
-                    },
-                  ),
-                ),
-                const SizedBox(width: 6),
+                    const SizedBox(width: 12),
 
-                // Delete Row Button
-                IconButton(
-                  icon: const Icon(
-                    Icons.delete_outline,
-                    color: Colors.white38,
-                    size: 20,
+                    // Last DM Sent Date Picker
+                    Expanded(
+                      flex: 2,
+                      child: InkWell(
+                        onTap: () => _pickDate(profile),
+                        borderRadius: BorderRadius.circular(12),
+                        child: InputDecorator(
+                          decoration: const InputDecoration(
+                            labelText: 'Last DM Sent',
+                            prefixIcon: Icon(
+                              Icons.calendar_today_rounded,
+                              size: 16,
+                              color: Colors.black45,
+                            ),
+                          ),
+                          child: Text(
+                            profile.lastDmDate,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Field 3: Feed / Person Notes
+                TextFormField(
+                  initialValue: profile.notes,
+                  maxLines: 2,
+                  minLines: 2,
+                  decoration: const InputDecoration(
+                    labelText: 'Feed / Person Notes',
+                    hintText:
+                        'What is their feed like? Niche, vibe, mutuals, talking points...',
+                    alignLabelWithHint: true,
                   ),
-                  tooltip: 'Delete Profile',
-                  onPressed: () => _deleteProfile(profile),
+                  onChanged: (val) {
+                    profile.notes = val;
+                    _saveData();
+                  },
                 ),
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  // --- BUTTON & CONTROL HELPERS ---
+  Widget _buildMiniButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: 26,
+        height: 26,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3ECCC),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFD4C894)),
+        ),
+        child: Icon(icon, size: 14, color: Colors.black87),
+      ),
+    );
+  }
+
+  Widget _buildDeleteButton({
+    required String tooltip,
+    required VoidCallback onPressed,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.all(7),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFEE2E2).withValues(alpha: 0.7),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xFFFECACA)),
+          ),
+          child: const Icon(
+            Icons.delete_outline_rounded,
+            size: 16,
+            color: Color(0xFFDC2626),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPillActionButton({
+    required String label,
+    required IconData icon,
+    required Color bgColor,
+    required Color borderColor,
+    required Color textColor,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: borderColor),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 13, color: textColor),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOpenedStatusToggle(ProfileItem profile) {
+    return InkWell(
+      onTap: () => _toggleProfileOpened(profile, !profile.isOpened),
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: profile.isOpened
+              ? const Color(0xFF10B981)
+              : Colors.white.withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: profile.isOpened
+                ? const Color(0xFF059669)
+                : const Color(0xFFD4C894),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              profile.isOpened
+                  ? Icons.check_circle_rounded
+                  : Icons.circle_outlined,
+              size: 15,
+              color: profile.isOpened ? Colors.white : Colors.black45,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              profile.isOpened ? 'Opened' : 'Unopened',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: profile.isOpened ? Colors.white : Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
