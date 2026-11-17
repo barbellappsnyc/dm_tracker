@@ -483,32 +483,11 @@ class _TrackerHomeState extends State<TrackerHome>
         controller: _tabController,
         children: [_buildOpenersTab(), _buildProfilesTab()],
       ),
-      floatingActionButton: Thick3DButton(
-        depth: 4.5,
-        borderRadius: 20.0,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-        color: const Color(0xFF2E2E34),
-        shadowColor: const Color(0xFF141416),
-        borderColor: const Color(0xFF4B4B55),
+      floatingActionButton: Retro3DButton(
         onPressed: _tabController.index == 0
             ? _addEmptyOpener
             : _addEmptyProfile,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.add_rounded, size: 20, color: Colors.white),
-            const SizedBox(width: 6),
-            Text(
-              _tabController.index == 0 ? 'New Opener' : 'New Profile',
-              style: const TextStyle(
-                fontFamily: 'SF Pro',
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
+        child: const Icon(Icons.add, size: 22, color: Colors.black87),
       ),
     );
   }
@@ -518,7 +497,7 @@ class _TrackerHomeState extends State<TrackerHome>
     if (openers.isEmpty) {
       return const Center(
         child: Text(
-          'No openers yet. Click New Opener to add your first template.',
+          'No openers yet. Click + to add your first template.',
           style: TextStyle(fontFamily: 'SF Pro', color: Colors.black54),
         ),
       );
@@ -529,152 +508,247 @@ class _TrackerHomeState extends State<TrackerHome>
       itemCount: openers.length,
       itemBuilder: (context, index) {
         final opener = openers[index];
-        return Card(
-          key: ValueKey(opener.id),
-          margin: const EdgeInsets.only(bottom: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Color(0xFFE2D9B3), width: 1),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 1. Header: Opener title + Success Rate pill + Delete Button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.format_quote_rounded,
-                          size: 16,
-                          color: Colors.black45,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Opener #${openers.length - index}',
-                          style: const TextStyle(
-                            fontFamily: 'SF Pro',
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
+        const labelBg = Color(0xFFFBBF24);
+        const valueBg = Color(0xFFFDE68A);
+        const dividerColor = Color(0xFF4B5563);
+        const labelStyle = TextStyle(
+          fontFamily: 'Helvetica',
+          fontSize: 16,
+          fontStyle: FontStyle.italic,
+          color: Color(0xFF374151),
+        );
+
+        Widget tableRow({
+          required String label,
+          required Widget right,
+          bool isLast = false,
+          Color rightBg = valueBg,
+        }) {
+          return Container(
+            decoration: BoxDecoration(
+              border: isLast
+                  ? null
+                  : const Border(
+                      bottom: BorderSide(color: dividerColor, width: 1),
                     ),
-                    Row(
-                      children: [
-                        // Success Rate Pill
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
+            ),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    width: 120,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    decoration: const BoxDecoration(
+                      color: labelBg,
+                      border: Border(
+                        right: BorderSide(color: dividerColor, width: 1),
+                      ),
+                    ),
+                    child: Center(child: Text(label, style: labelStyle)),
+                  ),
+                  Expanded(
+                    child: Container(
+                      color: rightBg,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      child: right,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return ClipRRect(
+          key: ValueKey(opener.id),
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: dividerColor, width: 1.5),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              children: [
+                // Row 1 — Header
+                Container(
+                  color: labelBg,
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
                           ),
-                          decoration: BoxDecoration(
-                            color: opener.successRate >= 30
-                                ? const Color(0xFFD1FAE5)
-                                : Colors.black.withValues(alpha: 0.04),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: opener.successRate >= 30
-                                  ? const Color(0xFF10B981)
-                                  : const Color(0xFFD4C894),
+                          child: Text(
+                            'Opener',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Helvetica',
+                              fontSize: 18,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF374151),
                             ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.trending_up_rounded,
-                                size: 14,
-                                color: opener.successRate >= 30
-                                    ? const Color(0xFF059669)
-                                    : Colors.black54,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${opener.successRate.toStringAsFixed(1)}% success',
-                                style: TextStyle(
-                                  fontFamily: 'SF Pro',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: opener.successRate >= 30
-                                      ? const Color(0xFF047857)
-                                      : Colors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
-                        const SizedBox(width: 8),
-                        _buildDeleteButton(
-                          tooltip: 'Delete Opener',
-                          onPressed: () => _deleteOpener(opener),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline_rounded,
+                          color: Color(0xFFDC2626),
+                          size: 20,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-
-                // 2. Opener Line (Vertically stacked, multiline support)
-                TextFormField(
-                  initialValue: opener.text,
-                  maxLines: 3,
-                  minLines: 2,
-                  decoration: const InputDecoration(
-                    labelText: 'Opener Script',
-                    hintText: 'Type your cold DM opener line here...',
-                    alignLabelWithHint: true,
+                        tooltip: 'Delete Opener',
+                        onPressed: () => _deleteOpener(opener),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
                   ),
-                  onChanged: (val) {
-                    opener.text = val;
-                    _saveData();
-                  },
                 ),
-                const SizedBox(height: 12),
+                Container(height: 1, color: dividerColor),
 
-                // 3. Stats & Counters Row (Vertically stacked underneath)
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildCounterBox(
-                        label: 'Times Used',
-                        value: opener.timesUsed,
-                        icon: Icons.send_rounded,
-                        onDecrement: () {
+                // Row 2 — Text
+                tableRow(
+                  label: 'Text',
+                  right: TextFormField(
+                    initialValue: opener.text,
+                    maxLines: 3,
+                    minLines: 1,
+                    style: const TextStyle(
+                      fontFamily: 'Helvetica',
+                      fontSize: 14,
+                      color: Color(0xFF374151),
+                    ),
+                    decoration: const InputDecoration(
+                      hintText: 'Type your cold DM opener here...',
+                      hintStyle: TextStyle(color: Colors.black38, fontSize: 13),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                      filled: false,
+                    ),
+                    onChanged: (val) {
+                      opener.text = val;
+                      _saveData();
+                    },
+                  ),
+                ),
+
+                // Row 3 — Times Used
+                tableRow(
+                  label: 'Times used',
+                  right: Row(
+                    children: [
+                      Retro3DButton(
+                        onPressed: () {
                           if (opener.timesUsed > 0) {
                             setState(() => opener.timesUsed--);
                             _saveData();
                           }
                         },
-                        onIncrement: () {
+                        child: const Icon(
+                          Icons.remove,
+                          size: 16,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        '${opener.timesUsed}',
+                        style: const TextStyle(
+                          fontFamily: 'Helvetica',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF374151),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Retro3DButton(
+                        onPressed: () {
                           setState(() => opener.timesUsed++);
                           _saveData();
                         },
+                        child: const Icon(
+                          Icons.add,
+                          size: 16,
+                          color: Colors.black87,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildCounterBox(
-                        label: 'Times Opened',
-                        value: opener.timesOpened,
-                        icon: Icons.mark_email_read_rounded,
-                        onDecrement: () {
+                    ],
+                  ),
+                ),
+
+                // Row 4 — Success
+                tableRow(
+                  label: 'Success',
+                  isLast: true,
+                  right: Row(
+                    children: [
+                      Retro3DButton(
+                        onPressed: () {
                           if (opener.timesOpened > 0) {
                             setState(() => opener.timesOpened--);
                             _saveData();
                           }
                         },
-                        onIncrement: () {
+                        child: const Icon(
+                          Icons.remove,
+                          size: 16,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        '${opener.timesOpened}',
+                        style: const TextStyle(
+                          fontFamily: 'Helvetica',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF374151),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Retro3DButton(
+                        onPressed: () {
                           setState(() => opener.timesOpened++);
                           _saveData();
                         },
+                        child: const Icon(
+                          Icons.add,
+                          size: 16,
+                          color: Colors.black87,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 14),
+                      Text(
+                        '${opener.successRate.toStringAsFixed(1)}%',
+                        style: TextStyle(
+                          fontFamily: 'Helvetica',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: opener.successRate >= 30
+                              ? const Color(0xFF047857)
+                              : const Color(0xFF6B7280),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -684,89 +758,12 @@ class _TrackerHomeState extends State<TrackerHome>
     );
   }
 
-  Widget _buildCounterBox({
-    required String label,
-    required int value,
-    required VoidCallback onDecrement,
-    required VoidCallback onIncrement,
-    IconData? icon,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.65),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2D9B3)),
-      ),
-      child: Row(
-        children: [
-          if (icon != null) ...[
-            Icon(icon, size: 15, color: Colors.black45),
-            const SizedBox(width: 8),
-          ],
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontFamily: 'SF Pro',
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-          Thick3DButton(
-            depth: 3.0,
-            borderRadius: 8.0,
-            padding: const EdgeInsets.all(5),
-            color: const Color(0xFFFFFDF5),
-            shadowColor: const Color(0xFFC7B988),
-            borderColor: const Color(0xFFD4C894),
-            onPressed: onDecrement,
-            child: const Icon(
-              Icons.remove_rounded,
-              size: 14,
-              color: Colors.black87,
-            ),
-          ),
-          Container(
-            constraints: const BoxConstraints(minWidth: 36),
-            alignment: Alignment.center,
-            child: Text(
-              '$value',
-              style: const TextStyle(
-                fontFamily: 'SF Pro',
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-          Thick3DButton(
-            depth: 3.0,
-            borderRadius: 8.0,
-            padding: const EdgeInsets.all(5),
-            color: const Color(0xFFFFFDF5),
-            shadowColor: const Color(0xFFC7B988),
-            borderColor: const Color(0xFFD4C894),
-            onPressed: onIncrement,
-            child: const Icon(
-              Icons.add_rounded,
-              size: 14,
-              color: Colors.black87,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // --- TAB 2: PROFILES ---
   Widget _buildProfilesTab() {
     if (profiles.isEmpty) {
       return const Center(
         child: Text(
-          'No profiles tracked yet. Click New Profile to add a contact.',
+          'No profiles tracked yet. Click + to add a contact.',
           style: TextStyle(fontFamily: 'SF Pro', color: Colors.black54),
         ),
       );
@@ -782,214 +779,338 @@ class _TrackerHomeState extends State<TrackerHome>
             ? profile.openerId
             : null;
 
-        return Card(
-          key: ValueKey(profile.id),
-          margin: const EdgeInsets.only(bottom: 14),
-          color: profile.isOpened
-              ? const Color(0xFFECFDF5) // Soft mint green when opened
-              : const Color(0xFFFFFBEA), // Light notepad yellow
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(
-              color: profile.isOpened
-                  ? const Color(0xFF10B981)
-                  : const Color(0xFFE2D9B3),
-              width: 1.2,
+        const labelBg = Color(0xFFFBBF24);
+        const valueBg = Color(0xFFFDE68A);
+        const dividerColor = Color(0xFF4B5563);
+        const labelStyle = TextStyle(
+          fontFamily: 'Helvetica',
+          fontSize: 16,
+          fontStyle: FontStyle.italic,
+          color: Color(0xFF374151),
+        );
+
+        Widget tableRow({
+          required String label,
+          required Widget right,
+          bool isLast = false,
+          Color rightBg = valueBg,
+        }) {
+          return Container(
+            decoration: BoxDecoration(
+              border: isLast
+                  ? null
+                  : const Border(
+                      bottom: BorderSide(color: dividerColor, width: 1),
+                    ),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    width: 120,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    decoration: const BoxDecoration(
+                      color: labelBg,
+                      border: Border(
+                        right: BorderSide(color: dividerColor, width: 1),
+                      ),
+                    ),
+                    child: Center(child: Text(label, style: labelStyle)),
+                  ),
+                  Expanded(
+                    child: Container(
+                      color: rightBg,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      child: right,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return ClipRRect(
+          key: ValueKey(profile.id),
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: dividerColor, width: 1.5),
+            ),
+            clipBehavior: Clip.antiAlias,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Field 1: Top Bar (Username + Quick Action Links + Opened Toggle + Delete)
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      flex: 4,
-                      child: TextFormField(
+                // Row 1 — Header
+                Container(
+                  color: labelBg,
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          child: Text(
+                            'Profile',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Helvetica',
+                              fontSize: 18,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF374151),
+                            ),
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline_rounded,
+                          color: Color(0xFFDC2626),
+                          size: 20,
+                        ),
+                        tooltip: 'Delete Profile',
+                        onPressed: () => _deleteProfile(profile),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(height: 1, color: dividerColor),
+
+                // Row 2 — Username
+                tableRow(
+                  label: 'Username',
+                  right: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
                         initialValue: profile.username,
                         style: const TextStyle(
-                          fontFamily: 'SF Pro',
+                          fontFamily: 'Helvetica',
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
+                          color: Color(0xFF374151),
                         ),
                         decoration: const InputDecoration(
-                          labelText: 'Username',
                           hintText: 'e.g. johndoe',
                           prefixText: '@',
                           prefixStyle: TextStyle(
-                            fontFamily: 'SF Pro',
+                            fontFamily: 'Helvetica',
                             fontWeight: FontWeight.w700,
-                            color: Colors.black54,
+                            color: Color(0xFF6B7280),
                           ),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                          filled: false,
                         ),
                         onChanged: (val) {
                           setState(() => profile.username = val);
                           _saveData();
                         },
                       ),
-                    ),
-                    const SizedBox(width: 12),
-
-                    // Quick Action 3D Buttons
-                    if (cleanHandle.isNotEmpty) ...[
-                      _buildPillActionButton(
-                        label: 'Profile',
-                        icon: Icons.open_in_new_rounded,
-                        color: const Color(0xFFEEF2FF),
-                        shadowColor: const Color(0xFFA5B4FC),
-                        borderColor: const Color(0xFF818CF8),
-                        textColor: const Color(0xFF4338CA),
-                        onTap: () => _openUrl(
-                          'https://www.instagram.com/$cleanHandle/',
+                      if (cleanHandle.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            _buildPillActionButton(
+                              label: 'Profile',
+                              icon: Icons.open_in_new_rounded,
+                              color: const Color(0xFFEEF2FF),
+                              shadowColor: const Color(0xFFA5B4FC),
+                              borderColor: const Color(0xFF818CF8),
+                              textColor: const Color(0xFF4338CA),
+                              onTap: () => _openUrl(
+                                'https://www.instagram.com/$cleanHandle/',
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            _buildPillActionButton(
+                              label: 'Direct DM',
+                              icon: Icons.send_rounded,
+                              color: const Color(0xFFECFDF5),
+                              shadowColor: const Color(0xFF6EE7B7),
+                              borderColor: const Color(0xFF34D399),
+                              textColor: const Color(0xFF047857),
+                              onTap: () =>
+                                  _openUrl('https://ig.me/m/$cleanHandle'),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      _buildPillActionButton(
-                        label: 'Direct DM',
-                        icon: Icons.send_rounded,
-                        color: const Color(0xFFECFDF5),
-                        shadowColor: const Color(0xFF6EE7B7),
-                        borderColor: const Color(0xFF34D399),
-                        textColor: const Color(0xFF047857),
-                        onTap: () =>
-                            _openUrl('https://ig.me/m/$cleanHandle'),
-                      ),
-                      const SizedBox(width: 12),
+                      ],
                     ],
-
-                    // Opened Status 3D Toggle Button
-                    _buildOpenedStatusToggle(profile),
-
-                    const SizedBox(width: 8),
-
-                    // Delete Profile 3D Button
-                    _buildDeleteButton(
-                      tooltip: 'Delete Profile',
-                      onPressed: () => _deleteProfile(profile),
-                    ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 12),
 
-                // Field 2: Details Row (Opener Dropdown + Last DM Date)
-                Row(
-                  children: [
-                    // Opener Dropdown
-                    Expanded(
-                      flex: 3,
-                      child: DropdownButtonFormField<String>(
-                        key: ValueKey('${profile.id}_$validOpenerId'),
-                        initialValue: validOpenerId,
-                        isExpanded: true,
-                        style: const TextStyle(
-                          fontFamily: 'SF Pro',
-                          color: Colors.black87,
-                          fontSize: 13,
+                // Row 3 — Last DM
+                tableRow(
+                  label: 'Last DM',
+                  right: InkWell(
+                    onTap: () => _pickDate(profile),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.calendar_today_rounded,
+                          size: 15,
+                          color: Color(0xFF6B7280),
                         ),
-                        decoration: const InputDecoration(
-                          labelText: 'Opener Used',
-                          prefixIcon: Icon(
-                            Icons.forum_outlined,
-                            size: 16,
-                            color: Colors.black45,
+                        const SizedBox(width: 8),
+                        Text(
+                          profile.lastDmDate.isEmpty
+                              ? 'Pick a date'
+                              : profile.lastDmDate,
+                          style: const TextStyle(
+                            fontFamily: 'Helvetica',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF374151),
                           ),
                         ),
-                        dropdownColor: const Color(0xFFFFFBEA),
-                        borderRadius: BorderRadius.circular(12),
-                        items: [
-                          const DropdownMenuItem<String>(
-                            value: null,
-                            child: Text(
-                              'None',
-                              style: TextStyle(
-                                fontFamily: 'SF Pro',
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ),
-                          ...openers.map(
-                            (o) => DropdownMenuItem<String>(
-                              value: o.id,
-                              child: Text(
-                                o.text.isEmpty ? '(Untitled Opener)' : o.text,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontFamily: 'SF Pro',
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const DropdownMenuItem<String>(
-                            value: '__CREATE_NEW__',
-                            child: Text(
-                              '+ Create New Opener...',
-                              style: TextStyle(
-                                fontFamily: 'SF Pro',
-                                color: Color(0xFF6366F1),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                        onChanged: (val) => _linkOpenerToProfile(profile, val),
-                      ),
+                      ],
                     ),
-                    const SizedBox(width: 12),
+                  ),
+                ),
 
-                    // Last DM Sent Date Picker
-                    Expanded(
-                      flex: 2,
-                      child: InkWell(
-                        onTap: () => _pickDate(profile),
-                        borderRadius: BorderRadius.circular(12),
-                        child: InputDecorator(
-                          decoration: const InputDecoration(
-                            labelText: 'Last DM Sent',
-                            prefixIcon: Icon(
-                              Icons.calendar_today_rounded,
-                              size: 16,
-                              color: Colors.black45,
-                            ),
+                // Row 4 — Opener
+                tableRow(
+                  label: 'Opener',
+                  right: DropdownButtonFormField<String>(
+                    key: ValueKey('${profile.id}_$validOpenerId'),
+                    initialValue: validOpenerId,
+                    isExpanded: true,
+                    style: const TextStyle(
+                      fontFamily: 'Helvetica',
+                      color: Color(0xFF374151),
+                      fontSize: 13,
+                    ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                      filled: false,
+                    ),
+                    dropdownColor: const Color(0xFFFDE68A),
+                    borderRadius: BorderRadius.circular(12),
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text(
+                          'None',
+                          style: TextStyle(
+                            fontFamily: 'Helvetica',
+                            color: Color(0xFF9CA3AF),
                           ),
+                        ),
+                      ),
+                      ...openers.map(
+                        (o) => DropdownMenuItem<String>(
+                          value: o.id,
                           child: Text(
-                            profile.lastDmDate,
+                            o.text.isEmpty ? '(Untitled Opener)' : o.text,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontFamily: 'SF Pro',
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Helvetica',
+                              color: Color(0xFF374151),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      const DropdownMenuItem<String>(
+                        value: '__CREATE_NEW__',
+                        child: Text(
+                          '+ Create New Opener...',
+                          style: TextStyle(
+                            fontFamily: 'Helvetica',
+                            color: Color(0xFF6366F1),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                    onChanged: (val) => _linkOpenerToProfile(profile, val),
+                  ),
                 ),
-                const SizedBox(height: 12),
 
-                // Field 3: Feed / Person Notes
-                TextFormField(
-                  initialValue: profile.notes,
-                  maxLines: 2,
-                  minLines: 2,
-                  style: const TextStyle(
-                    fontFamily: 'SF Pro',
-                    fontSize: 13,
-                    color: Colors.black87,
+                // Row 5 — Opened (green background when checked)
+                tableRow(
+                  label: 'Opened',
+                  rightBg: profile.isOpened
+                      ? const Color(0xFFD1FAE5)
+                      : valueBg,
+                  right: Row(
+                    children: [
+                      Checkbox(
+                        value: profile.isOpened,
+                        activeColor: const Color(0xFF10B981),
+                        onChanged: (val) =>
+                            _toggleProfileOpened(profile, val),
+                      ),
+                      Text(
+                        profile.isOpened ? 'Yes — opened!' : 'Not yet',
+                        style: TextStyle(
+                          fontFamily: 'Helvetica',
+                          fontSize: 14,
+                          color: profile.isOpened
+                              ? const Color(0xFF047857)
+                              : const Color(0xFF6B7280),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                  decoration: const InputDecoration(
-                    labelText: 'Feed / Person Notes',
-                    hintText:
-                        'What is their feed like? Niche, vibe, mutuals, talking points...',
-                    alignLabelWithHint: true,
+                ),
+
+                // Row 6 — Notes
+                tableRow(
+                  label: 'Notes',
+                  isLast: true,
+                  right: TextFormField(
+                    initialValue: profile.notes,
+                    maxLines: 3,
+                    minLines: 2,
+                    style: const TextStyle(
+                      fontFamily: 'Helvetica',
+                      fontSize: 13,
+                      color: Color(0xFF374151),
+                    ),
+                    decoration: const InputDecoration(
+                      hintText:
+                          'Feed, niche, vibe, mutuals, talking points...',
+                      hintStyle: TextStyle(
+                        color: Colors.black38,
+                        fontSize: 13,
+                      ),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                      filled: false,
+                    ),
+                    onChanged: (val) {
+                      profile.notes = val;
+                      _saveData();
+                    },
                   ),
-                  onChanged: (val) {
-                    profile.notes = val;
-                    _saveData();
-                  },
                 ),
               ],
             ),
@@ -1000,29 +1121,6 @@ class _TrackerHomeState extends State<TrackerHome>
   }
 
   // --- BUTTON & CONTROL HELPERS (PRETTY 3D) ---
-  Widget _buildDeleteButton({
-    required String tooltip,
-    required VoidCallback onPressed,
-  }) {
-    return Tooltip(
-      message: tooltip,
-      child: Thick3DButton(
-        depth: 3.0,
-        borderRadius: 8.0,
-        padding: const EdgeInsets.all(6),
-        color: const Color(0xFFFFECEC),
-        shadowColor: const Color(0xFFE5A3A3),
-        borderColor: const Color(0xFFFCA5A5),
-        onPressed: onPressed,
-        child: const Icon(
-          Icons.delete_outline_rounded,
-          size: 15,
-          color: Color(0xFFDC2626),
-        ),
-      ),
-    );
-  }
-
   Widget _buildPillActionButton({
     required String label,
     required IconData icon,
@@ -1052,42 +1150,6 @@ class _TrackerHomeState extends State<TrackerHome>
               fontSize: 11,
               fontWeight: FontWeight.w700,
               color: textColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOpenedStatusToggle(ProfileItem profile) {
-    return Thick3DButton(
-      depth: 3.5,
-      borderRadius: 16.0,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-      color: profile.isOpened ? const Color(0xFF10B981) : const Color(0xFFFFFDF5),
-      shadowColor:
-          profile.isOpened ? const Color(0xFF047857) : const Color(0xFFC7B988),
-      borderColor:
-          profile.isOpened ? const Color(0xFF059669) : const Color(0xFFD4C894),
-      onPressed: () => _toggleProfileOpened(profile, !profile.isOpened),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            profile.isOpened
-                ? Icons.check_circle_rounded
-                : Icons.circle_outlined,
-            size: 14,
-            color: profile.isOpened ? Colors.white : Colors.black45,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            profile.isOpened ? 'Opened' : 'Unopened',
-            style: TextStyle(
-              fontFamily: 'SF Pro',
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: profile.isOpened ? Colors.white : Colors.black87,
             ),
           ),
         ],
@@ -1164,6 +1226,65 @@ class _Thick3DButtonState extends State<Thick3DButton> {
                   BoxShadow(
                     color: widget.shadowColor,
                     offset: Offset(0, widget.depth),
+                    blurRadius: 0,
+                  ),
+                ],
+        ),
+        child: widget.child,
+      ),
+    );
+  }
+}
+
+// --- RETRO ROUND 3D BUTTON (round grey + button, used in counters & FAB) ---
+class Retro3DButton extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onPressed;
+
+  const Retro3DButton({
+    super.key,
+    required this.child,
+    required this.onPressed,
+  });
+
+  @override
+  State<Retro3DButton> createState() => _Retro3DButtonState();
+}
+
+class _Retro3DButtonState extends State<Retro3DButton> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: widget.onPressed == null
+          ? null
+          : (_) => setState(() => _isPressed = true),
+      onTapUp: widget.onPressed == null
+          ? null
+          : (_) {
+              setState(() => _isPressed = false);
+              widget.onPressed?.call();
+            },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 60),
+        curve: Curves.easeOut,
+        margin: EdgeInsets.only(
+          top: _isPressed ? 3.5 : 0.0,
+          bottom: _isPressed ? 0.0 : 3.5,
+        ),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFD1D5DB),
+          shape: BoxShape.circle,
+          border: Border.all(color: const Color(0xFF9CA3AF), width: 1.2),
+          boxShadow: _isPressed
+              ? []
+              : const [
+                  BoxShadow(
+                    color: Color(0xFF9CA3AF),
+                    offset: Offset(0, 3.5),
                     blurRadius: 0,
                   ),
                 ],
